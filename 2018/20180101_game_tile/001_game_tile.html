@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001_game_tile</title>
+    <style>
+    canvas {
+        display: block;
+        border: 4px solid black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c" width="240" height="180"></canvas>
+    <script>
+        ;(function() {
+
+            'use strict';
+            
+            var c = document.getElementById('c');
+            var ctx = c.getContext('2d');
+
+            var buildMap = function(game, map, ctx) {
+                var mw = map[0].length;
+                var mh = map.length;
+                for(var i = 0; i < mh; i++) {
+                    for(var j = 0; j < mw; j++) {
+                        var type = map[i][j];
+                        var tile = TileFactory.create(type);
+                        tile.draw(ctx, j * tile.w, i * tile.h);
+                    }
+                }
+            }
+
+            var map = [
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+
+            var Tile = function Tile(walkable, draw) {
+                this.walkable = walkable;
+                this.draw = draw;
+                this.w = 30;
+                this.h = 30;
+            };
+            var TileFactory = {
+                create: function(type) {
+                    var tile; 
+                    switch(type) {
+                        case 0: 
+                            tile = new Tile(true, function(ctx, x, y) {
+                                ctx.fillStyle = 'white';
+                                ctx.fillRect(x, y, this.w, this.h);
+                            });
+                            break;
+                        case 1:
+                            tile = new Tile(false, function(ctx, x, y) {
+                                ctx.fillStyle = 'black';
+                                ctx.fillRect(x, y, this.w, this.h);
+                            }); 
+                            break;
+                    }
+                    return tile;
+                }
+            };
+
+            Tile.prototype = {
+                constructor: Tile
+            };
+
+            var game = {};
+            buildMap(game, map, ctx);
+
+        })();
+    </script>
+</body>
+</html>
