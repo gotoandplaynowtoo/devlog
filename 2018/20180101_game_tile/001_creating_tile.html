@@ -29,8 +29,12 @@
                     for(var j = 0; j < mw; j++) {
                         var type = map[i][j];
                         var tile = TileFactory.create(type);
-                        tile.draw(ctx, j * tile.w, i * tile.h);
-                        game['t' + i + '' + j] = tile;
+
+                        tile.x = j * tile.w;
+                        tile.y = i * tile.h;
+
+                        tile.draw(ctx);
+                        game['t_' + i + '_' + j] = tile;
                     }
                 }
             }
@@ -49,21 +53,23 @@
                 this.draw = draw;
                 this.w = 30;
                 this.h = 30;
+                this.x = 0;
+                this.y = 0;
             };
             var TileFactory = {
                 create: function(type) {
                     var tile; 
                     switch(type) {
                         case 0: 
-                            tile = new Tile(true, function(ctx, x, y) {
+                            tile = new Tile(true, function(ctx) {
                                 ctx.fillStyle = 'white';
-                                ctx.fillRect(x, y, this.w, this.h);
+                                ctx.fillRect(this.x, this.y, this.w, this.h);
                             });
                             break;
                         case 1:
                             tile = new Tile(false, function(ctx, x, y) {
                                 ctx.fillStyle = 'black';
-                                ctx.fillRect(x, y, this.w, this.h);
+                                ctx.fillRect(this.x, this.y, this.w, this.h);
                             }); 
                             break;
                     }
