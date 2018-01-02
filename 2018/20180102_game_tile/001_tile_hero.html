@@ -41,7 +41,6 @@
                         game['t_' + i + '_' + j] = tile;
                     }
                 }
-                console.log(game);
             }
 
             var map = [
@@ -95,6 +94,8 @@
                 yt: 1,
                 w: 20,
                 h: 20,
+                wh: 10, // width half
+                hh: 10, // height half
                 x: 0,
                 y: 0,
                 draw: function(ctx) {
