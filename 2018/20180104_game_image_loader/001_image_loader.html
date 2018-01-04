@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001_image_loader</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+    ;(function() {
+
+        'use strict';
+        var ImageLoader = {
+            load: function(sources, onFinish, OnProgress) {
+                var imgCount = Object.keys(sources).length;
+                var loadedCount = 0;
+                var images = {};
+                for(var src in sources) {
+                    images[src] = new Image();
+                    images[src].onload = function() {
+                        loadedCount++;
+                        OnProgress(this, loadedCount / imgCount);
+                        if(loadedCount >= imgCount) {
+                            onFinish(images);
+                        }
+                    }
+                    images[src].src = sources[src];
+                }
+            }
+        };
+    
+        ImageLoader.load({
+            img1: 'https://i.kinja-img.com/gawker-media/image/upload/s--ULNzXuAM--/c_scale,fl_progressive,q_80,w_800/deumob8eo6ljsjsyftac.jpg',
+            img2: 'http://www.gamerassaultweekly.com/wp-content/uploads/2016/06/chrono-trigger-sprites.png',
+            img3: 'https://lh4.ggpht.com/cR1AoSEZ3B5ziJ9cuRJTBBN9GRDvxvhGj6EYap8JfV4OFbjRR6MUTq_YU3H0W6sTH60=h900',
+            img4: 'http://cdn1.gamephd.com/wp-content/uploads/plixpapers1607/we_love_sprites!_wallpaper_background_50511.jpg',
+            img5: 'http://2.bp.blogspot.com/-v1pLTDsidos/VEFUDBe6jYI/AAAAAAAAPvI/91VebGlCI9A/s1600/1.jpg'
+        }, function(images) { // onFinish
+            console.log('finish loading all images');
+        }, function(image, progress) { // onProgress
+            console.log(image.src, (progress * 100) + '%');
+        });
+
+    })();
+    </script>
+</body>
+</html>
