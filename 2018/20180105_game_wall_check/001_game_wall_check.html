@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001_wall_check</title>
+    <style>
+    canvas {
+        display: block;
+        border: 4px solid black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c" width="240" height="180"></canvas>
+    <script>
+        ;(function() {
+            'use strict';
+
+            var c = document.getElementById('c');
+            var ctx = c.getContext('2d');
+            var tiles = [];
+            var w = c.width;
+            var h = c.height;
+            
+            var getMyCorners = function(x, y, ob) {
+                ob.downY = Math.floor((y + ob.hh - 1) / game.th);
+	            ob.upY = Math.floor((y - ob.hh) / game.th);
+	            ob.leftX = Math.floor((x - ob.wh) / game.tw);
+	            ob.rightX = Math.floor((x + ob.wh - 1) / game.tw);
+	            //check if they are walls 
+                ob.upleft = game["t_" + ob.upY + "_" + ob.leftX].walkable;
+                ob.downleft = game["t_" + ob.downY + "_" + ob.leftX].walkable;
+                ob.upright = game["t_" + ob.upY + "_" + ob.rightX].walkable;
+                ob.downright = game["t_" + ob.downY + "_" + ob.rightX].walkable;
+            };
+
+            var buildMap = function(game, map, ctx, char) {
+                var mw = map[0].length;
+                var mh = map.length;
+                for(var i = 0; i < mh; i++) {
+                    for(var j = 0; j < mw; j++) {
+                        var type = map[i][j];
+                        var tile = TileFactory.create(type);
+
+                        tile.x = j * game.tw;
+                        tile.y = i * game.th;
+
+                        char.x = (char.xt * game.tw) + game.tw / 2;
+                        char.y = (char.yt * game.th) + game.th / 2;
+
+                        tile.draw(ctx);
+                        char.draw(ctx);
+
+                        game['t_' + i + '_' + j] = tile;
+                        tiles.push(tile);
+                    }
+                }
+                console.log(game);
+            }
+
+            var map = [
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+
+            var Tile = function Tile(walkable, draw) {
+                this.walkable = walkable;
+                this.draw = draw;
+                this.w = 30;
+                this.h = 30;
+                this.x = 0;
+                this.y = 0;
+            };
+            var TileFactory = {
+                create: function(type) {
+                    var tile; 
+                    switch(type) {
+                        case 0: 
+                            tile = new Tile(true, function(ctx) {
+                                ctx.fillStyle = 'white';
+                                ctx.fillRect(this.x, this.y, this.w, this.h);
+                            });
+                            break;
+                        case 1:
+                            tile = new Tile(false, function(ctx, x, y) {
+                                ctx.fillStyle = 'black';
+                                ctx.fillRect(this.x, this.y, this.w, this.h);
+                            }); 
+                            break;
+                    }
+                    return tile;
+                }
+            };
+
+            Tile.prototype = {
+                constructor: Tile
+            };
+
+            var game = {
+                tw: 30,
+                th: 30
+            };
+            var char = {
+                xt: 2,
+                yt: 1,
+                w: 20,
+                h: 20,
+                wh: 10, // width half
+                hh: 10, // height half
+                x: 0,
+                y: 0,
+                speed: 4,
+                draw: function(ctx) {
+                    ctx.save();
+                    ctx.fillStyle = 'red';
+                    ctx.translate(this.x, this.y);
+                    ctx.fillRect(
+                        -this.w / 2,
+                        -this.h / 2,
+                        this.w, 
+                        this.h
+                    );
+                    ctx.restore();
+                },
+                move: function(dirx, diry) {
+                    //this.x += dirx * this.speed;
+                    //this.y += diry * this.speed;
+                    getMyCorners (this.x, this.y + this.speed * diry, this);
+                    if (diry == -1)
+                    {
+                        if (this.upleft && this.upright)
+                        {
+                            this.y += this.speed * diry;
+                        }
+                        else
+                        {
+                            this.y = this.yt * game.th + this.hh;
+                        }
+                    }
+
+                    if (diry == 1)	{
+                        if (this.downleft && this.downright)
+                        {
+                            this.y += this.speed * diry;
+                        }
+                        else
+                        {
+                            this.y = (this.yt + 1) * game.th - this.hh;
+                        }
+                    }
+
+                    getMyCorners (this.x + this.speed * dirx, this.y,this);
+                    if (dirx == -1)
+                    {
+                        if (this.downleft && this.upleft)
+                        {
+                            this.x += this.speed * dirx;
+                        }
+                        else
+                        {
+                            this.x = this.xt * game.tw + this.wh;
+                        }
+                    }
+                    if (dirx == 1)
+                    {
+                        if (this.upright && this.downright)
+                        {
+                            this.x += this.speed * dirx;
+                        }
+                        else
+                        {
+                            this.x = (this.xt + 1) * game.tw - this.wh;
+                        }
+                    }
+
+                    this.xt = Math.floor(this.x / game.tw);
+	                this.yt = Math.floor(this.y / game.th);
+
+                }
+            };
+
+            var Key = {
+                _pressed: {},
+                LEFT: 37,
+                UP: 38,
+                RIGHT: 39,
+                DOWN: 40,
+                isDown: function(keyCode) {
+                    return this._pressed[keyCode];
+                },
+                onKeydown: function(event) {
+                    this._pressed[event.keyCode] = true;
+                },
+                onKeyup: function(event) {
+                    delete this._pressed[event.keyCode];
+                }
+            };
+            buildMap(game, map, ctx, char);
+
+            window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+            window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
+            
+            requestAnimationFrame(function loop() {
+                requestAnimationFrame(loop);
+                ctx.clearRect(0, 0, w, h);
+                for(var i = 0; i < tiles.length; i++) {
+                    var tile = tiles[i];
+                    tile.draw(ctx);
+                }
+
+                if(Key.isDown(Key.RIGHT)) char.move(1, 0);
+                else if(Key.isDown(Key.LEFT)) char.move(-1, 0)
+                else if(Key.isDown(Key.UP)) char.move(0, -1);
+                else if(Key.isDown(Key.DOWN)) char.move(0, 1);
+
+                char.draw(ctx);
+            });
+
+        })();
+    </script>
+</body>
+</html>
