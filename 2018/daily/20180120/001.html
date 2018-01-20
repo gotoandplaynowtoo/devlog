@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    canvas {
+        display: block;
+        background: black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+    ;(function() {
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+
+        var Circle = function(x, y, a) {
+            this.x = x;
+            this.y = y;
+            this.a = a;
+            this.r = 0;
+        };
+        Circle.prototype = {
+            constructor: Circle,
+            update: function() {
+                this.r = 10 + Math.sin(this.a) * 5;
+                this.a += 0.1;
+            },
+            render: function(ctx) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.translate(this.x, this.y);
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+        };
+
+        var list = [];
+        var obj;
+        var ctr = 800;
+        var an = 0
+        var rad = 4;
+
+        for(var i = 0; i < ctr; i++) {
+            obj = new Circle(
+                cx + Math.cos(an) * rad,
+                cy + Math.sin(an) * rad,
+                an,
+            );
+            list.push(obj);
+            an += 40;
+            rad += 0.2;
+        }
+
+        requestAnimationFrame(function loop() {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(var i = 0; i < list.length; i++) {
+                obj = list[i];
+                obj.update();
+                obj.render(ctx);
+            }
+        });
+
+    })();  
+    </script>
+</body>
+</html>

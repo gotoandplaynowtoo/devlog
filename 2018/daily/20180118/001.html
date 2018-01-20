@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>20180118</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    canvas {
+        display: block;
+        background: black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+    ;(function() {
+
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+
+        var r = 0;
+        var a = 0;
+        for(var i = 0; i < 500; i++) {
+
+            var x = cx + Math.cos(a) * r;
+            var y = cy + Math.sin(a) * r;
+
+            var dx = x - cx;
+            var dy = y - cy;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            var rad = Math.abs(Math.sin(d * 0.4)) * 20;
+
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.arc(x, y, rad, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            a += 0.1;
+            r += 0.6;
+        }
+
+    })();
+    </script>
+</body>
+</html>

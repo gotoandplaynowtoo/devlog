@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    canvas {
+        display: block;
+        background: black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+    ;(function() {
+
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+        var color = 0;
+
+        function createCircular(count, posRad) {
+            var posCirc = 2 * Math.PI * posRad;
+            var circleRad = (posCirc / count) / 2;
+            var slice = (Math.PI * 2) / count;
+            
+            for(var i = 0; i < Math.PI * 2; i += slice) {
+                var x = cx + Math.cos(i) * posRad;
+                var y = cy + Math.sin(i) * posRad;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.arc(x, y, circleRad, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        for(var i = 0; i < 100; i++) {
+            createCircular(
+                8 * (i + 1), 
+                200 + (2 * (i + 1))
+            );
+        }
+
+    })();
+    </script>
+</body>
+</html>

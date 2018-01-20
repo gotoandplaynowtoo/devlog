@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        ;(function() {
+
+            'use strict';
+            var c = document.getElementById('c');
+            var ctx = c.getContext('2d');
+            var w = c.width = window.innerWidth;
+            var h = c.height = window.innerHeight;
+            var cx = w / 2;
+            var cy = h / 2;
+            var Circle = function(x, y, a, r) {
+                this.x = x;
+                this.y = y;
+                this.a = a;
+                this.r = r;
+                this.br = r;
+            };
+            Circle.prototype = {
+                constructor: Circle,
+                update: function() {
+                    this.a += 0.1;
+                    this.r = this.br + Math.sin(this.a) * (this.br * 0.9);
+                },
+                render: function(ctx) {
+                    ctx.save();
+                    ctx.fillStyle = 'red';
+                    ctx.beginPath();
+                    ctx.translate(this.x, this.y);
+                    ctx.arc(0, 0, this.r, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            };
+
+            var list = [];
+            var obj;
+            var max = 40;
+            var rad = 6;
+            var spc = 0;
+            var xp;
+            var yp = cy - (max - 1) * (rad * 2 + spc) / 2;
+
+            var left = cx - (max - 1) * (rad * 2 + spc) / 2;
+            var right = cx + (max - 1) * (rad * 2 + spc) / 2;
+            var top = cy - (max - 1) * (rad * 2 + spc) / 2;
+            var bottom = cy + (max - 1) * (rad * 2 + spc) / 2;
+            
+            for(var i = 0; i < max; i++) {
+                xp = cx - (max - 1) * (rad * 2 + spc) / 2;
+                for(var j = 0; j < max; j++) {
+
+                    var xx, yy;
+
+                    if(xp < cx) xx = left;
+                    if(xp > cx) xx = right;
+                    if(yp < cy) yy = top;
+                    if(yp > cy) yy = bottom;
+
+                    var dx = xx - xp
+                    var dy = yy - yp;
+                    var dd = Math.sqrt(dx * dx + dy * dy);
+
+                    obj = new Circle(
+                        xp, 
+                        yp,
+                        dd * Math.PI / 180 * 6,
+                        rad
+                    );
+                    list.push(obj);
+                    xp += rad * 2 + spc;
+                }
+                yp += rad * 2 + spc;
+            }
+
+            requestAnimationFrame(function loop() {
+                requestAnimationFrame(loop);
+                ctx.clearRect(0, 0, w, h);
+                for(var i = 0; i < list.length; i++) {
+                    obj = list[i];
+                    obj.update();
+                    obj.render(ctx);
+                }
+
+            });
+
+        })();
+    </script>
+</body>
+</html>
