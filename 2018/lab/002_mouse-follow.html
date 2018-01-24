@@ -74,6 +74,8 @@
             var p2 = points[i];
             prj(p2);
             ctx.beginPath();
+            ctx.lineWidth = 2 * p2.s;
+            ctx.globalAlpha = p2.s;
             ctx.moveTo(p1.p.x, p1.p.y);
             ctx.lineTo(p2.p.x, p2.p.y);
             ctx.stroke();
@@ -103,17 +105,21 @@
         pen.x = mx;
         pen.y = my;
 
+        var offx = 0;
+        var offy = 0;
+
         if(pen.x !== ox || pen.y != oy) {
+
             if(points.length < maxPoint) { 
                 points.push(new Point(
-                    pen.x, 
-                    pen.y, 
+                    pen.x + offx, 
+                    pen.y + offy, 
                     mz
                 ));
             } else {
                 var pp = points.shift();
-                pp.x = pen.x;
-                pp.y = pen.y;
+                pp.x = pen.x + offx;
+                pp.y = pen.y + offy;
                 pp.z = mz;
             }
         }
