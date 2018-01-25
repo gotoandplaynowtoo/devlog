@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>mouse-follow-003</title>
+    <style>
+    * {
+    padding: 0;
+    margin: 0;
+    }
+    canvas {
+    display: block;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+    ;(function() {
+
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+        var fl = 500;
+        var camera = {
+            x: 0,
+            y: 0,
+            z: 0
+        };
+
+        var createPoint = function(x, y, z) {
+            return {
+                x: x,
+                y: y,
+                z: z
+            };
+        };
+
+        var project = function(p3d, cam) {
+            var s = fl / (fl + p3d.z - cam.z);
+            return {
+                x: (p3d.x - cam.x) * s,
+                y: (p3d.y - cam.y) * s,
+                s: s
+            };
+        };
+
+        var points = [];
+        var len = 10;
+        for(var i = 0; i < len; i++) {
+            var pt = createPoint(
+                        Math.random() * 200 - 100, 
+                        Math.random() * 200 - 100, 
+                        Math.random() * 200 - 100
+                    );
+            points.push(pt);
+        }
+
+        var aa = 0;
+        requestAnimationFrame(function loop() {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+
+            camera.z = Math.sin(aa) * 200;
+            aa += 0.1;
+
+            for(var i = 0; i < len; i++) {
+
+                var p = points[i];
+                var p2d = project(p, camera);
+                var x2d = cx + p2d.x;
+                var y2d = cy + p2d.y;
+
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, 10 * p2d.s, 0, Math.PI * 2);                
+                ctx.fill();
+            }
+        });
+
+    })();
+    </script>
+</body>
+</html>
