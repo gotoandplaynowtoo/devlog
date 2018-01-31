@@ -35,14 +35,14 @@
             this.a = a;
             this.r = 0;
             this.as = ass;
-            this.cl = Math.cos(ass * 10) * 180;
+            this.cl = Math.cos(ass * 4) * 180;
         };
         Circle.prototype = {
             constructor: Circle,
             update: function() {
                 this.r = 10 + Math.cos(this.a) * 6;
                 this.a += this.as;
-                this.cl += 0.5;
+                this.cl += 1;
             },
             render: function(ctx) {
                 ctx.save();
@@ -86,7 +86,7 @@
             var dy = yy - y;
             var d = Math.sqrt(dx * dx + dy * dy);
 
-            ass += 0.0001;
+            ass += 0.0002;
 
             obj = new Circle(
                 x,
