@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+    ;(function() {
+
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+
+        var Square = function(x, y, s, r, a) {
+            this.x = x;
+            this.y = y;
+            this.s = s;
+            this.r = r;
+            this.a = a;
+            this.sc = 1;
+        };
+
+        Square.prototype = {
+            constructor: Square,
+            update: function() {
+                this.sc = 1 + Math.cos(this.a);
+                this.a += 0.1;
+                this.r += 0.04;
+            },
+            render: function(ctx) {
+                var sh = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.sc, this.sc);
+                ctx.rotate(this.r);
+                ctx.strokeRect(-sh, -sh, this.s, this.s);
+                ctx.restore();
+            }
+        };
+
+        var lst = [];
+        var sqr;
+        var cnt = 100;
+
+        for(var i = 0; i < cnt; i++) {
+            sqr = new Square(
+                cx, 
+                cy, 
+                10 + Math.random() * 100, 
+                Math.random() * (Math.PI * 2),
+                Math.random() * 10
+            );
+            lst.push(sqr);
+        }
+
+        requestAnimationFrame(function loop() {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(var i = 0, len = lst.length; i < len; i++) {
+                sqr = lst[i];
+                sqr.update();
+                sqr.render(ctx);
+            }
+        });
+
+    })();
+    </script>
+</body>
+</html>
