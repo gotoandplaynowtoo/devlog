@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    canvas {
+        display: block;
+        background: black;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const cnt = 20;
+        const lst = [];
+
+        class Box {
+            constructor(x, y, s) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+            }
+            update() {
+                if(Math.random() * 100 > 90) {
+                    this.s = Math.random() * 30;
+                }
+            }
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.translate(this.x, this.y);  
+                ctx.strokeStyle = 'red';
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        let bs = 20;
+        let sy = cy - bs * (cnt - 1) / 2;
+        for(let i = 0; i < cnt; i++) {
+            let sx = cx - bs * (cnt - 1) / 2;
+            for(let j = 0; j < cnt; j++) {
+                let box = new Box(
+                    sx, 
+                    sy, 
+                    10 + Math.random() * 20
+                );
+                lst.push(box);
+                sx += bs;
+            }
+            sy += bs;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+            for(let i = 0, len = lst.length; i < len; i++) {
+                let box = lst[i];
+                box.update();
+                box.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
