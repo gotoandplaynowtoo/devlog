@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        class Box {
+            constructor(x, y, a) {
+                this.x = x;
+                this.y = y;
+                this.s = 20;
+                this.a = a;
+                this.sc = 1;
+                this.aa = 0;
+            }
+            update() {
+                this.sc = 1 + Math.cos(this.a);
+                this.a += 0.06;
+                this.aa += 0.02;
+            }
+            render(ctx) {
+                let h = this.s / 2;
+
+                ctx.save();
+                ctx.strokeStyle = 'red';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.aa);
+                ctx.scale(this.sc, this.sc);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        const cnt = 20;
+        const lst = [];
+        const sz = 20;
+        let sy = cy - sz * (cnt - 1) / 2;
+        let a = 0;
+
+        for(let i = 0; i < cnt; i++) {
+            let sx = cx - sz * (cnt - 1) / 2;
+            for(let j = 0; j < cnt; j++) {
+                let obj = new Box(
+                    sx, 
+                    sy,
+                    a += 0.4
+                );
+                lst.push(obj);
+                sx += sz;
+            }
+            sy += sz;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(let i = 0, len = lst.length; i < len; i++) {
+                let obj = lst[i];
+                obj.update();
+                obj.render(ctx);
+            }
+        };
+
+        loop();
+
+    </script>
+</body>
+</html>
