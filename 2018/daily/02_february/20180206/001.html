@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        class Square {
+            constructor(x, y, s, a) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+                this.a = a;
+                this.sl = 1;
+            }
+            update() { 
+                this.sl = 1 + Math.cos(this.a) * 0.5;
+                this.a += 0.1;
+            }
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.a); 
+                ctx.scale(this.sl, this.sl);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        const n = 40;
+        const l = [];
+        const s = 10;
+        let sy = cy - (n - 1) * s / 2;
+        let a = 0;
+
+        for(let i = 0; i < n; i++) {
+
+            let sx = cx - (n - 1) * s / 2;            
+
+            for(let j = 0; j < n; j++) {
+
+                let dx = sx - cx;
+                let dy = sy - cy;
+                let d = Math.sqrt(dx * dx + dy * dy);
+                a = d * 0.9;
+
+                let sq = new Square(
+                    sx, 
+                    sy, 
+                    s,
+                    a
+                );
+                l.push(sq);
+                sx += s;
+            }
+            sy += s;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(let i = 0, len = l.length; i < len; i++) {
+                let sq = l[i];
+                sq.update();
+                sq.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
