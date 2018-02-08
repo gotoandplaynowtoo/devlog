@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        class Box {
+            constructor(x, y, s, a) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+                this.a = a;
+                this.sl = 1;
+            }
+            update() {}
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'red';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.a);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        let off = 0;
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+
+            const size = 20;
+            const n = Math.floor(Math.random() * 20);
+            let sy = cy - (n - 1) * size / 2;
+
+            for(let i = 0; i < n; i++) {
+                let sx = cx - (n - 1) * size / 2;
+                for(let j = 0; j < n; j++) {
+
+                    let dx = sx - cx;
+                    let dy = sy - cy;
+                    let dd = Math.sqrt(dx * dx + dy * dy);
+
+                    let box = new Box(
+                        sx, 
+                        sy,
+                        size * Math.random(),
+                        dd * Math.PI / 180
+                    );
+
+                    box.update();
+                    box.render(ctx);
+
+                    sx += size;
+                }
+                sy += size;
+            }
+
+        };
+
+        loop();
+    </script>
+</body>
+</html>
