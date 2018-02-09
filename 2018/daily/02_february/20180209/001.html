@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        class Box {
+            constructor(x, y, s, a, ai) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+                this.a = a;
+                this.sl = 1;
+                this.ai = ai;
+                this.ao = a;
+            }
+            update() {
+                this.sl = 1 + Math.cos(this.a);
+                this.a += this.ai;
+            }
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'red';
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.sl, this.sl);
+                ctx.rotate(this.ao);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.fillRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        const list = [];
+        const n = 500;
+        const size = 10;
+        const aslice = 360 / n;
+        let rad = 10;
+        let ai = 0.1;
+
+        for(let i = 0; i < n; i++) {
+
+            let a = aslice * i * Math.PI / 180 * 190;
+            let x = cx + Math.cos(a) * rad;
+            let y = cy + Math.sin(a) * rad;
+
+            rad += 0.4;
+            ai += 0.0002;
+
+            let b = new Box(
+                x,
+                y,
+                size,
+                a * 2,
+                ai
+            );
+            list.push(b);
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(let i = 0, len = list.length; i < len; i++) {
+                let b = list[i];
+                b.update();
+                b.render(ctx);
+            }
+        };
+
+        loop();
+
+    </script>
+</body>
+</html>
