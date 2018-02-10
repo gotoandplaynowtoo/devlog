@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        class Box {
+            constructor(x, y, s, a) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+                this.a = a;
+            }
+            update() {}
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'red';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.a);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        const list = [];
+        const size = 10;
+        let interval = 0;
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+
+            if(interval === 0) {
+                let row = 1 + Math.floor(Math.random() * 30);
+                let sy = cy - (row - 1) * size / 2;
+
+                for(let i = 0; i < row; i++) {
+                    let col = 1 + Math.floor(Math.random() * 30);
+                    let sx = cx - (col - 1) * size / 2;
+                    for(let j = 0; j < col; j++) {
+                        let obj = new Box(
+                            sx, 
+                            sy,
+                            size * Math.random(),
+                            0
+                        );
+                        sx += size;
+                        obj.update();
+                        obj.render(ctx);
+                    }
+                    sy += size;
+                }
+            }
+
+            interval = (interval + 1) % 8;
+
+        };
+
+        loop();
+
+    </script>
+</body>
+</html>
