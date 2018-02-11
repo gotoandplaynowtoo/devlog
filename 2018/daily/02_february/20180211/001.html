@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const n = 10;
+        const size = 40;
+        let sy = cy - (n - 1) * size / 2;
+
+        class Box {
+            constructor(x, y, s, ax, ay) {
+                this.x = x;
+                this.y = y;
+                this.s = s;
+                this.ax = ax;
+                this.ay = ay;
+                this.slx = 1;
+                this.sly = 1;
+                this.a = 0;
+                this.as = Math.random();
+                this.asx = Math.random() * 0.2;
+                this.asy = Math.random() * 0.2;
+            }
+            update() {
+                this.slx = 1 + Math.cos(this.ax);
+                this.sly = 1 + Math.sin(this.ay);
+                this.ax += this.asx;
+                this.ay += this.asy;
+                this.a += this.as;
+            }
+            render(ctx) {
+                let h = this.s / 2;
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.a);
+                ctx.scale(this.slx, this.sly);
+                ctx.strokeRect(-h, -h, this.s, this.s);
+                ctx.restore();
+            }
+        }
+
+        for(let row = 0; row < n; row++) {
+            let sx = cx - (n - 1) * size / 2;
+            for(let col = 0; col < n; col++) {
+                let box = new Box(
+                    sx,
+                    sy,
+                    20,
+                    Math.random(),
+                    Math.random()
+                );
+                list.push(box);
+
+                sx += size;
+            }
+            sy += size;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+
+            for(let i = 0, len = list.length; i < len; i++) {
+                let box = list[i];
+                box.update();
+                box.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
