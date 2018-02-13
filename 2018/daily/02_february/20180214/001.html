@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            font-family: 'Alfa Slab One', cursive;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const size = 40;
+
+        class Text {
+            constructor(txt, x, y) {
+                this.txt = txt;
+                this.x = x;
+                this.y = y;
+                this.a = Math.random() * (Math.PI * 2);
+                this.slx = 1;
+                this.sly = 1;
+                this.oy = y;
+                this.ay = Math.random() * (Math.PI * 2);
+                this.r = Math.random() * (Math.PI * 2);
+                this.vr = Math.random();
+                this.rad = 50 + Math.random() * 50;
+                this.srad = 0.5;
+            }
+            update() {
+                this.y = this.oy + Math.sin(this.ay) * this.rad;
+                this.slx = 1 + Math.cos(this.a) * this.srad;
+                this.sly = 1 + Math.sin(this.a) * this.srad;
+                this.a += 0.4;
+                this.ay += 0.2;
+                this.r += this.vr;
+                this.vr *= 0.98;
+                if(this.vr < 0.01) {
+                    this.r = 0; 
+                    this.rad *= 0.98;
+                    this.srad *= 0.98;
+                    if(this.srad < 0.2) {
+                        this.srad = 0.2;
+                    } 
+                }
+            }
+            render(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.slx, this.sly);
+                ctx.rotate(this.r);
+                ctx.font = '60px Alfa Slab One';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
+                ctx.strokeText(this.txt, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        const str = 'Happy Valentine\'s Day';
+        const n = str.length;
+        let sx = cx - (n - 1) * size / 2;
+
+        for(let i = 0; i < n; i++) {
+            let txt = new Text(
+                str.charAt(i),
+                sx,
+                cy
+            )
+            list.push(txt);
+            sx += size;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, w, h);
+            for(let i = 0, len = list.length; i < len; i++) {
+                let txt = list[i];
+                txt.update();
+                txt.render(ctx);
+            }
+        };
+
+        window.onload = function() {
+            loop();
+        }
+        
+    </script>
+</body>
+</html>
