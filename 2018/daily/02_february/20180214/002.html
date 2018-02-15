@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>002</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const n = 100;
+
+        class Box {
+            constructor(x, y, w, h, a) {
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.h = h;
+                this.a = a
+                this.sx = 1;
+                this.sy = 1;
+            }
+            update() {
+                this.a += 0.1;
+            }
+            render(ctx) {
+                let hh = this.h / 2;
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.sx, this.sy);
+                ctx.rotate(this.a);
+                ctx.strokeRect(0, -hh, this.w, this.h);
+                ctx.restore();
+            }
+        }
+
+        let a = 0;
+        for(let i = 0; i < n; i++) {
+
+            let x = cx + Math.cos(a) * 40;
+            let y = cy + Math.sin(a) * 40;
+            let b = new Box(
+                x,
+                y,
+                200,
+                20,
+                a
+            );
+            list.push(b);
+
+            a += 4;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(let i = 0, len = list.length; i < len; i++) {
+                let b = list[i];
+                b.update();
+                b.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
