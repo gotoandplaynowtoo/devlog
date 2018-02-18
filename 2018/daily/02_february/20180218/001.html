@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const n = 800;
+
+        class Box {
+            constructor(x, y, w, h, a, av) {
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.h = h;
+                this.a = a
+                this.sx = 1;
+                this.sy = 1;
+                this.cl = a * 0.4;
+                this.as = av;
+            }
+            update() {
+                this.a += this.as;
+                this.cl += 2;
+            }
+            render(ctx) {
+                let hh = this.h / 2;
+                ctx.save();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+                ctx.fillStyle = 'hsl(' + (this.cl) + ', 100%, 50%)';
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.sx, this.sy);
+                ctx.rotate(this.a);
+                ctx.strokeRect(0, -hh, this.w, this.h);
+                ctx.fillRect(0, -hh, this.w, this.h);
+                ctx.restore();
+            }
+        }
+
+        let a = 0;
+        let a2 = 0;
+        let rad = 2;
+        let av = 0.001;
+        let ss = 100;
+        for(let i = 0; i < n; i++) {
+
+            let x = cx + Math.cos(a) * rad;
+            let y = cy + Math.sin(a) * rad;
+            let b = new Box(
+                x,
+                y,
+                ss * 0.5, 
+                ss * 0.5,
+                a, 
+                av
+            );
+            list.push(b);
+
+            ss -= 0.12;
+            a += (360 / n) * Math.PI / 180 * 100;
+            rad += 0.28;
+            av += 0.0004;
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for(let i = 0, len = list.length; i < len; i++) {
+                let b = list[i];
+                b.update();
+                b.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
