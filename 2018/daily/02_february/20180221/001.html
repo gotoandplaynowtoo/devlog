@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script src="perlin.js"></script>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const n = 50;
+
+        class Circle {
+            constructor(x, y) {
+                this.tx = 0;
+                this.ty = 0;
+                this.x = x;
+                this.y = y;
+                this.sx = Math.random() * (0.02 * 2) - 0.02;
+                this.sy = Math.random() * (0.02 * 2) - 0.02;
+                this.r = 4 + Math.random() * 16;
+                this.sp = Math.random() * 20 - 10;
+                this.or = this.r;
+                this.a = 0;
+                this.as = Math.random() * 0.1;
+
+            }
+            update() {
+
+                let dx = this.x - cx;
+                let dy = this.y - cx;
+                let dd = Math.sqrt(dx * dx + dy * dy);
+                this.hue = dd * 0.3;
+
+                let vx = noise.simplex3(w, h, this.tx);
+                let vy = noise.simplex3(w, h, this.ty);
+                this.tx += this.sx;
+                this.ty += this.sy;
+                this.x += vx * this.sp;
+                this.y += vy * this.sp;
+                this.r = this.or + Math.cos(this.a) *(this.or / 2);
+                this.a += this.as;
+            }
+            render(ctx) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, 50%, 0.1)';
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        for(let i = 0; i < n; i++) {
+            let circ = new Circle(
+                Math.random() * w, 
+                Math.random() * h
+            );
+            list.push(circ);
+        }
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            for(let i = 0; i < n; i++) {
+                let circ = list[i];
+                circ.update();
+                circ.render(ctx);
+            }
+        };
+
+        loop();
+    </script>
+</body>
+</html>
