@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script src="perlin.js"></script>
+    <script>
+        'use strict';
+
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+        const w = c.width = window.innerWidth;
+        const h = c.height = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const list = [];
+        const n = 50;
+
+        noise.seed(Math.random());
+
+        let x = 0;
+        let y = 0;
+        let tx = 0;
+        let ty = 0;
+        let px = 0;
+        let py = 0;
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+
+            px = noise.simplex2(tx, 0);
+            py = noise.simplex2(0, ty);
+
+            tx += 0.002;
+            ty += 0.004;
+
+            x = cx + px * 500;
+            y = cy + py * 500;
+
+            let dx = x - cx;
+            let dy = y - cy;
+            let dd = Math.sqrt(dx * dx + dy * dy);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = 'hsla(' + (dd * 0.6) + ', 100%, 50%, 0.5)';
+            ctx.arc(x, y, 4 + dd * 0.04, 0, Math.PI * 2);
+            ctx.stroke();
+
+        };
+
+        loop();
+    </script>
+</body>
+</html>
