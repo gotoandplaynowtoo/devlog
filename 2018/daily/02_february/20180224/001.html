@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="p5.min.js"></script>
+    <script>
+        'use strict';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        let of1 = Math.random() * 1000;
+        let of2 = Math.random() * 1000;
+        let aax = 0;
+        let aay = 0;
+
+        function setup() {
+            createCanvas(w, h);
+        }
+        function draw() {
+
+            let ax = map(noise(of1), 0, 1, -360, 360);
+            let ay = map(noise(of2), 0, 1, -360, 360);
+
+            let x = cx + Math.cos(ax * Math.PI / 180) * 200;
+            let y = cy + Math.sin(ay * Math.PI / 180) * 200;
+            let size = Math.abs((ax * Math.PI / 180)) * 20;
+
+            of1 += 0.01;
+            of2 += 0.01;
+
+            ellipse(x, y, size, size);
+
+        }
+
+
+    </script>
+</body>
+</html>
