@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="p5.min.js"></script>
+    <script>
+        'use strict';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        let of1s = Math.random() * 1000;
+        let of2s = Math.random() * 1000;
+
+        function setup() {
+            createCanvas(w, h);
+        }
+
+        function draw() {
+            background(0);
+            noFill();
+            drawGraph(of1s);
+            drawGraph(of2s);
+            of1s += 0.01;
+            of2s -= 0.01;
+        }
+
+        function drawGraph(ofs) {
+            beginShape();
+            let off = ofs;
+            for(let i = 0; i < 720; i++) {
+                stroke(255);
+                let n = map(noise(off), 0, 1, -80, 80);
+                let xx = map(cos(i * Math.PI / 180), -1, 1, -200, 200)
+                let yy = map(sin(i * Math.PI / 180 ), -1, 1, -200, 200);
+                let x = cx + n + xx;
+                let y = cy + n + yy;
+                off += 0.01;
+                vertex(x, y);
+            }
+            endShape();
+        }
+    </script>
+</body>
+</html>
