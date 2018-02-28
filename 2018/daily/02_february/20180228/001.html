@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>001</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="p5.min.js"></script>
+    <script>
+        'use strict';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const count = 10;
+        const list = [];
+
+        class Mover {
+            constructor() {
+                this.x = 0;
+                this.y = 0;
+                this.offx = Math.random() * 1000;
+                this.offy = Math.random() * 1000;
+            }
+            update() {
+
+                let nx = noise(this.offx);
+                let ny = noise(this.offy);
+                let mx = map(nx, 0, 1, 0, w);
+                let my = map(ny, 0, 1, 0, h);
+
+                this.x = mx;
+                this.y = my;
+
+                this.offx += 0.001;
+                this.offy += 0.005;
+
+            }
+        }
+
+        function setup() {
+            createCanvas(w, h);
+            background(0);
+        
+            for(let i = 0; i < count; i++) {
+                let mover = new Mover();
+                list.push(mover);
+            }
+        }
+
+        function draw() {
+            // UPDATE
+            for(let i = 0; i < count; i++) {
+                let mover = list[i];
+                mover.update();
+            }
+            // RENDER
+            for(let i = 1; i < count; i++) {
+                let cm = list[i];
+                let pm = list[i-1];
+                stroke('rgba(255,0,0,0.05)');
+                line(
+                    cm.x, 
+                    cm.y,
+                    pm.x,
+                    pm.y
+                );
+                noFill();
+                stroke('rgba(255,0,0,0.05)');
+                ellipse(cm.x, cm.y, 10, 10);
+                ellipse(pm.x, pm.y, 10, 10);
+            }
+        }
+    </script>
+</body>
+</html>
